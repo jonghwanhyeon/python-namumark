@@ -36,3 +36,37 @@ class Node:
 
     def __iter__(self):
         return iter(self.children)
+
+
+class Element(Node):
+    def __init__(self, *children):
+        super().__init__()
+        self.children = list(children)
+
+    def dump(self, indent=2):
+        def do_dump(element, depth=0):
+            yield '{indent}{element}'.format(
+                indent=' ' * (indent * depth),
+                element=repr(element)
+            )
+
+            if isinstance(element, Element):
+                for child in element:
+                    yield from do_dump(child, depth + 1)
+
+        return '\n'.join(do_dump(self))
+
+    def __rper__(self):
+        keys = vars(self).keys()
+        keys -= {'parent', 'children'}
+        keys = filter(lambda key: not key.startswith('_'), keys)
+
+        mappings = [
+            '{}={}'.format(key, repr(getattr(self, key)))
+            for key in sorted(keys)
+        ]
+
+        return '{name}({mappings})'.format(
+            name=self.__class__.__name__,
+            mappings=', '.join(mappings)
+        )
