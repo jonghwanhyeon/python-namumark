@@ -57,16 +57,18 @@ class Element(Node):
         return '\n'.join(do_dump(self))
 
     def __repr__(self):
+        identifier = '{:04x}'.format(id(self))
+
         keys = vars(self).keys()
         keys -= {'parent', 'children'}
         keys = filter(lambda key: not key.startswith('_'), keys)
-
         mappings = [
             '{}={}'.format(key, repr(getattr(self, key)))
             for key in sorted(keys)
         ]
 
-        return '{name}({mappings})'.format(
+        return '{name}#{identifier}({mappings})'.format(
             name=self.__class__.__name__,
+            identifier=identifier[-4:],
             mappings=', '.join(mappings)
         )
