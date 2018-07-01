@@ -1,47 +1,33 @@
-class Node:
-    def __init__(self):
+class Element:
+    def __init__(self, *children):
         self.parent = None
         self.children = []
 
-    def append(self, node):
-        """Append a given node as a last child of this node"""
-        node.parent = self
-        self.children.append(node)
+        for child in children:
+            self.append(child)
+
+    def append(self, element):
+        """Append a given element as a last child of this element"""
+        element.parent = self
+        self.children.append(element)
 
         return self
 
-    def prepend(self, node):
-        """Prepend a given node as a first child of this node"""
-        node.parent = self
-        self.children.insert(0, node)
+    def prepend(self, element):
+        """Prepend a given element as a first child of this element"""
+        element.parent = self
+        self.children.insert(0, element)
 
         return self
 
-    def wrap(self, node):
-        """Wrap this node in a given node"""
-        deepest = node
+    def wrap(self, element):
+        """Wrap this element in a given element"""
+        deepest = element
         while deepest.first_child:
             deepest = deepest.first_child
         deepest.append(self)
 
-        return node
-
-    @property
-    def first_child(self):
-        return self.children[0] if self.children else None
-
-    @property
-    def last_child(self):
-        return self.children[-1] if self.children else None
-
-    def __iter__(self):
-        return iter(self.children)
-
-
-class Element(Node):
-    def __init__(self, *children):
-        super().__init__()
-        self.children = list(children)
+        return element
 
     def dump(self, indent=2):
         def do_dump(element, depth=0):
@@ -55,6 +41,17 @@ class Element(Node):
                     yield from do_dump(child, depth + 1)
 
         return '\n'.join(do_dump(self))
+
+    @property
+    def first_child(self):
+        return self.children[0] if self.children else None
+
+    @property
+    def last_child(self):
+        return self.children[-1] if self.children else None
+
+    def __iter__(self):
+        return iter(self.children)
 
     def __repr__(self):
         identifier = '{:04x}'.format(id(self))
