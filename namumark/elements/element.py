@@ -8,16 +8,18 @@ class Element:
 
     def append(self, element):
         """Append a given element as a last child of this element"""
-        element.parent = self
-        self.children.append(element)
+        if isinstance(element, Element):
+            element.parent = self
 
+        self.children.append(element)
         return self
 
     def prepend(self, element):
         """Prepend a given element as a first child of this element"""
-        element.parent = self
-        self.children.insert(0, element)
+        if isinstance(element, Element):
+            element.parent = self
 
+        self.children.insert(0, element)
         return self
 
     def wrap(self, element):
