@@ -18,7 +18,7 @@ class Node:
         return self
 
     def wrap(self, node):
-        """Wrap a given node around this node"""
+        """Wrap this node in a given node"""
         deepest = node
         while deepest.first_child:
             deepest = deepest.first_child
