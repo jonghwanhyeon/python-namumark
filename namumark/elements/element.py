@@ -56,7 +56,7 @@ class Element(Node):
 
         return '\n'.join(do_dump(self))
 
-    def __rper__(self):
+    def __repr__(self):
         keys = vars(self).keys()
         keys -= {'parent', 'children'}
         keys = filter(lambda key: not key.startswith('_'), keys)
