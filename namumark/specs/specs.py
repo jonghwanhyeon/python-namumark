@@ -64,10 +64,10 @@ class HeadingSpec(BlockSpec):
     syntax = re.compile(r'''
         ^
             (\={1,6})  # marker
-                [ ]+  # required whitespace
-                    (.*)  # text
-                [ ]+  # required whitespace
-            \1  # marker
+            [ ]+  # required whitespace
+            (.*)  # text
+            [ ]+  # required whitespace
+            \1
         $
     ''', re.VERBOSE)
 
@@ -96,8 +96,8 @@ class QuoteSpec(BlockSpec):
     syntax = re.compile(r'''
         ^
             \>  # marker
-                [ ]*  # optional whitespace
-                    (.*)  # text
+            [ ]*  # optional whitespace
+            (.*)  # text
         $
     ''', re.VERBOSE)
 
