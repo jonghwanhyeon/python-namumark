@@ -55,6 +55,18 @@ class Element:
     def __iter__(self):
         return iter(self.children)
 
+    def __eq__(self, other):
+        if type(self) is not type(other):
+            return False
+
+        mine = dict(vars(self))
+        del mine['parent']
+
+        others = dict(vars(other))
+        del others['parent']
+
+        return mine == others
+
     def __repr__(self):
         identifier = '{:04x}'.format(id(self))
 
