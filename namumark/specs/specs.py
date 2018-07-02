@@ -124,6 +124,206 @@ class QuoteSpec(BlockSpec):
         return True
 
 
+@spec_for(UnorderedList)
+class UnorderedListSpec(BlockSpec):
+    '''
+     * text 1
+     * text 2
+    '''
+    syntax_for_create = re.compile(r'''
+        ^
+            [ ]  # required whitespace
+            (
+                \*  # marker
+                [ ]?  # optional whitespace
+                .*  # text
+            )
+        $
+    ''', re.VERBOSE)
+
+    syntax_for_consume = re.compile(r'''
+        ^
+            [ ]  # required whitespace
+            (
+                (?:  # a new unordered list item
+                    \*  # marker
+                    [ ]?  # optional whitespace
+                    .*  # text
+                )
+                |
+                (?:  # line continuations
+                    (?!\*)  # no unordered list marker
+                    (?![1AaIi]\.)  # no ordered list marker
+                    .*  # text
+                )
+            )
+        $
+    ''', re.VERBOSE)
+
+    accepts_text = False
+
+    @classmethod
+    def create(cls, text):
+        # ' * text 1' -> '* text 1'
+        match = cls.syntax_for_create.search(text)
+        if not match:
+            return (None, text)
+
+        return (UnorderedList(), match.group(1))
+
+    @classmethod
+    def consume(cls, text, context):
+        # ' * text 1' -> '* text 1'
+        # ' text 1' -> 'text 1'
+        match = cls.syntax_for_create.search(text)
+        if not match:
+            return (False, text)
+
+        return (True, match.group(1))
+
+    @staticmethod
+    def can_contain(element):
+        return True
+
+
+@spec_for(OrderedList)
+class OrderedListSpec(BlockSpec):
+    '''
+     1. text 1
+     A. text 2
+     a. text 3
+     I. text 4
+     i. text 5
+
+     I.#42 text 6
+     I. text 7
+    '''
+    syntax_for_create = re.compile(r'''
+        ^
+            [ ]  # required whitespace
+            (?P<marker>
+                (?P<bullet>[1AaIi])  # marker, bullet
+                \.  # marker
+            )
+            (?:
+                \#  # marker
+                (?P<start>\d+)  # marker, start
+            )?
+            (?P<text>
+                [ ]?  # optional whitespace
+                .*  # text
+            )
+        $
+    ''', re.VERBOSE)
+
+    syntax_for_consume = re.compile(r'''
+        ^
+            [ ]  # required whitespace
+            (
+                (?:  # a new unordered list item
+                    (?P<bullet>[1AaIi])  # marker, bullet
+                    \.  # marker
+                    (?!\#\d+)  # no start marker
+                    [ ]?  # optional whitespace
+                    .*  # text
+                )
+                |
+                (?:  # line continuations
+                    (?!\*)  # no unordered list marker
+                    (?![1AaIi]\.)  # no ordered list marker
+                    .*  # text
+                )
+            )
+        $
+    ''', re.VERBOSE)
+
+    accepts_text = False
+
+    @classmethod
+    def create(cls, text):
+        # ' 1. text 1' -> '1. text 1'
+        # ' 1.#42 text 1' -> '1. text 1'
+        match = cls.syntax_for_create.search(text)
+        if not match:
+            return (None, text)
+
+        return (
+            OrderedList(bullet=match.group('bullet'),
+                        start=int(match.group('start') or 1)),
+            match.group('marker') + match.group('text'))
+
+    @classmethod
+    def consume(cls, text, context):
+        # ' text 1' -> 'text 1'
+        # ' 1. text 1' -> '1. text 1'
+        match = cls.syntax_for_consume.search(text)
+        if not match:
+            return (False, text)
+
+        bullet = match.group('bullet')
+        if bullet and (bullet != context.bullet):
+            return (False, text)
+
+        return (True, match.group(1))
+
+    @staticmethod
+    def can_contain(element):
+        return True
+
+
+@spec_for(ListItem)
+class ListItemSpec(BlockSpec):
+    '''
+    * text 1
+    1. text 2
+    A. text 3
+    a. text 4
+    I. text 5
+    i. text 6
+
+    * text 1
+    text 2
+
+    1. text 1
+    text 2
+    '''
+    syntax = re.compile(r'''
+        ^
+            (?:
+                \*  # unordered list marker
+                |
+                [1AaIi]\.  # ordered list marker
+            )
+            [ ]?  # optional whitespace
+            (.*)  # text
+        $
+    ''', re.VERBOSE)
+
+    accepts_text = False
+
+    @classmethod
+    def create(cls, text):
+        match = cls.syntax.search(text)
+        if not match:
+            return (False, text)
+
+        return (ListItem(), match.group(1))
+
+    @classmethod
+    def consume(cls, text, context):
+        match = cls.syntax.search(text)
+        if match:
+            # Case 1: a new list item
+            return (False, text)
+
+        # Case 2: line continuations
+        return (True, text)
+
+    @staticmethod
+    def can_contain(element):
+        return True
+
+
 @spec_for(Paragraph)
 class ParagraphSpec(BlockSpec):
     accepts_text = True

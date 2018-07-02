@@ -29,6 +29,26 @@ class Paragraph(Block):
     pass
 
 
+class List(Block):
+    pass
+
+
+class UnorderedList(List):
+    pass
+
+
+class OrderedList(List):
+    def __init__(self, start, bullet, *children):
+        super().__init__(*children)
+
+        self.start = start
+        self.bullet = bullet
+
+
+class ListItem(Block):
+    pass
+
+
 class Indentation(Block):
     pass
 
