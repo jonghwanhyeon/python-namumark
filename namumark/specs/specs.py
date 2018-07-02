@@ -137,6 +137,42 @@ class ParagraphSpec(BlockSpec):
         return False
 
 
+@spec_for(Indentation)
+class IndentationSpec(BlockSpec):
+    '''
+     text 1
+     text 2
+    '''
+    syntax = re.compile(r'''
+        ^
+            [ ]  # marker
+            (.*)  # text
+        $
+    ''', re.VERBOSE)
+
+    accepts_text = False
+
+    @classmethod
+    def create(cls, text):
+        consumed, remaining_text = cls.consume(text, None)
+        if not consumed:
+            return (None, text)
+
+        return (Indentation(), remaining_text)
+
+    @classmethod
+    def consume(cls, text, context):
+        match = cls.syntax.search(text)
+        if not match:
+            return (False, text)
+
+        return (True, match.group(1))
+
+    @staticmethod
+    def can_contain(element):
+        return True
+
+
 @spec_for(ThematicBreak)
 class ThematicBreakSpec(BlockSpec):
     '''

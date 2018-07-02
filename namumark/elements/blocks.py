@@ -29,6 +29,10 @@ class Paragraph(Block):
     pass
 
 
+class Indentation(Block):
+    pass
+
+
 class ThematicBreak(Block):
     def __init__(self):
         super().__init__()
