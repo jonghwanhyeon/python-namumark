@@ -48,7 +48,7 @@ class Parser:
 
         last_open_block = None
         for open_block in self._iterate_open_blocks(block):
-            consumed, remaining_text = spec_of(open_block).consume(remaining_text)
+            consumed, remaining_text = spec_of(open_block).consume(remaining_text, open_block)
             if not consumed:
                 # This open_block and its descendatns are not suitable for a given text
                 self._close_blocks(open_block)

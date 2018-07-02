@@ -21,7 +21,7 @@ class BlockSpec:
         return (None, text)
 
     @classmethod
-    def consume(cls, text):
+    def consume(cls, text, context):
         """Try to consume markers from a given text. This function checks
         whether the given text is sutiable for this element or not.
 
@@ -43,7 +43,7 @@ class DocumentSpec(BlockSpec):
     accepts_text = False
 
     @classmethod
-    def consume(cls, text):
+    def consume(cls, text, context):
         return (True, text)
 
     @staticmethod
@@ -105,14 +105,14 @@ class QuoteSpec(BlockSpec):
 
     @classmethod
     def create(cls, text):
-        consumed, remaining_text = cls.consume(text)
+        consumed, remaining_text = cls.consume(text, None)
         if not consumed:
             return (None, text)
 
         return (Quote(), remaining_text)
 
     @classmethod
-    def consume(cls, text):
+    def consume(cls, text, context):
         match = cls.syntax.search(text)
         if not match:
             return (False, text)
@@ -129,7 +129,7 @@ class ParagraphSpec(BlockSpec):
     accepts_text = True
 
     @classmethod
-    def consume(cls, text):
+    def consume(cls, text, context):
         return (True, text)
 
     @staticmethod
