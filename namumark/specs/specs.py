@@ -124,6 +124,19 @@ class QuoteSpec(BlockSpec):
         return True
 
 
+@spec_for(Paragraph)
+class ParagraphSpec(BlockSpec):
+    accepts_text = True
+
+    @classmethod
+    def consume(cls, text):
+        return (True, text)
+
+    @staticmethod
+    def can_contain(element):
+        return False
+
+
 @spec_for(ThematicBreak)
 class ThematicBreakSpec(BlockSpec):
     '''
