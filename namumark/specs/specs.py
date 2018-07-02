@@ -101,7 +101,7 @@ class QuoteSpec(BlockSpec):
         $
     ''', re.VERBOSE)
 
-    aceepts_text = False
+    accepts_text = False
 
     @classmethod
     def create(cls, text):
@@ -140,7 +140,7 @@ class ThematicBreakSpec(BlockSpec):
         $
     ''', re.VERBOSE)
 
-    aceepts_text = False
+    accepts_text = False
 
     @classmethod
     def create(cls, text):
