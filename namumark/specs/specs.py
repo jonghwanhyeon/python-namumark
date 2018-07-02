@@ -48,7 +48,7 @@ class DocumentSpec(BlockSpec):
 
     @staticmethod
     def can_contain(element):
-        return False
+        return True
 
 
 @spec_for(Heading)
