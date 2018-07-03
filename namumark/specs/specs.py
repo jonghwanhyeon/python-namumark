@@ -175,7 +175,7 @@ class UnorderedListSpec(BlockSpec):
     def consume(cls, text, context):
         # ' * text 1' -> '* text 1'
         # ' text 1' -> 'text 1'
-        match = cls.syntax_for_create.search(text)
+        match = cls.syntax_for_consume.search(text)
         if not match:
             return (False, text)
 
