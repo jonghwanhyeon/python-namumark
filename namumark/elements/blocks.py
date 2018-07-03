@@ -14,8 +14,8 @@ class Document(Block):
 
 
 class Heading(Block):
-    def __init__(self, level):
-        super().__init__()
+    def __init__(self, level, *children):
+        super().__init__(*children)
 
         self.level = level
         self.closed = True
